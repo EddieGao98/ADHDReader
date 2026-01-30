@@ -2,9 +2,7 @@ import React from 'react';
 import {
   Settings,
   Type,
-  Columns,
-  Zap,
-  Gamepad2,
+  Video,
   Sun,
   Moon,
   Coffee,
@@ -47,7 +45,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         <div className="settings-header">
           <div className="settings-title">
             <Settings size={24} />
-            <h2>Reading Settings</h2>
+            <h2>Settings</h2>
           </div>
           <button className="close-button" onClick={onClose}>
             <X size={24} />
@@ -79,77 +77,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               >
                 <Coffee size={18} />
                 Sepia
-              </button>
-            </div>
-          </div>
-
-          {/* Bionic Reading */}
-          <div className="setting-group">
-            <div className="setting-header">
-              <label className="setting-label">
-                <Zap size={18} />
-                Bionic Reading
-              </label>
-              <label className="toggle">
-                <input
-                  type="checkbox"
-                  checked={settings.bionicEnabled}
-                  onChange={(e) => updateSetting('bionicEnabled', e.target.checked)}
-                />
-                <span className="toggle-slider" />
-              </label>
-            </div>
-            {settings.bionicEnabled && (
-              <div className="intensity-buttons">
-                <button
-                  className={`intensity-btn ${settings.bionicIntensity === 'light' ? 'active' : ''}`}
-                  onClick={() => updateSetting('bionicIntensity', 'light')}
-                >
-                  Light
-                </button>
-                <button
-                  className={`intensity-btn ${settings.bionicIntensity === 'medium' ? 'active' : ''}`}
-                  onClick={() => updateSetting('bionicIntensity', 'medium')}
-                >
-                  Medium
-                </button>
-                <button
-                  className={`intensity-btn ${settings.bionicIntensity === 'strong' ? 'active' : ''}`}
-                  onClick={() => updateSetting('bionicIntensity', 'strong')}
-                >
-                  Strong
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Chunk Size */}
-          <div className="setting-group">
-            <label className="setting-label">
-              <Columns size={18} />
-              Paragraph Size
-            </label>
-            <div className="chunk-buttons">
-              <button
-                className={`chunk-btn ${settings.chunkSize === 'small' ? 'active' : ''}`}
-                onClick={() => updateSetting('chunkSize', 'small')}
-              >
-                Small
-                <span className="chunk-desc">1 sentence</span>
-              </button>
-              <button
-                className={`chunk-btn ${settings.chunkSize === 'medium' ? 'active' : ''}`}
-                onClick={() => updateSetting('chunkSize', 'medium')}
-              >
-                Medium
-                <span className="chunk-desc">2-3 sentences</span>
-              </button>
-              <button
-                className={`chunk-btn ${settings.chunkSize === 'large' ? 'active' : ''}`}
-                onClick={() => updateSetting('chunkSize', 'large')}
-              >
-                Large
-                <span className="chunk-desc">4+ sentences</span>
               </button>
             </div>
           </div>
@@ -203,12 +130,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </select>
           </div>
 
-          {/* Background Game */}
+          {/* Background Video */}
           <div className="setting-group">
             <div className="setting-header">
               <label className="setting-label">
-                <Gamepad2 size={18} />
-                Background Game
+                <Video size={18} />
+                Background Video
               </label>
               <label className="toggle">
                 <input
@@ -224,8 +151,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <label>Opacity: {Math.round(settings.backgroundOpacity * 100)}%</label>
                 <input
                   type="range"
-                  min="0.1"
-                  max="0.6"
+                  min="0.2"
+                  max="0.8"
                   step="0.05"
                   value={settings.backgroundOpacity}
                   onChange={(e) => updateSetting('backgroundOpacity', parseFloat(e.target.value))}
@@ -258,7 +185,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             top: 0;
             right: 0;
             bottom: 0;
-            width: 380px;
+            width: 340px;
             max-width: 100vw;
             background: #1a1a2e;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -384,15 +311,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             transform: translateX(22px);
           }
 
-          .theme-buttons,
-          .intensity-buttons,
-          .chunk-buttons {
+          .theme-buttons {
             display: flex;
             gap: 0.5rem;
           }
 
-          .theme-btn,
-          .intensity-btn {
+          .theme-btn {
             flex: 1;
             display: flex;
             align-items: center;
@@ -408,48 +332,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             font-size: 0.875rem;
           }
 
-          .theme-btn:hover,
-          .intensity-btn:hover {
+          .theme-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.2);
           }
 
-          .theme-btn.active,
-          .intensity-btn.active {
+          .theme-btn.active {
             background: rgba(0, 255, 136, 0.15);
             border-color: #00ff88;
             color: #00ff88;
-          }
-
-          .chunk-btn {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.75rem 0.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-          }
-
-          .chunk-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-          }
-
-          .chunk-btn.active {
-            background: rgba(0, 255, 136, 0.15);
-            border-color: #00ff88;
-            color: #00ff88;
-          }
-
-          .chunk-desc {
-            font-size: 0.7rem;
-            opacity: 0.6;
           }
 
           .slider {

@@ -1,18 +1,21 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Settings, Upload, BookOpen, Sparkles } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Settings, Upload, Video, Sparkles } from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import TextReader from './components/TextReader';
 import SettingsPanel from './components/SettingsPanel';
-import BackgroundGame from './components/BackgroundGame';
-import { chunkText, applyBionicToChunks } from './utils/chunkText';
-import type { TextChunk, ReaderSettings, ParsedDocument } from './types';
+import BackgroundVideo from './components/BackgroundVideo';
+import type { ReaderSettings } from './types';
 import { DEFAULT_SETTINGS } from './types';
 import './App.css';
 
+interface DocumentState {
+  title: string;
+  content: string;
+}
+
 function App() {
-  const [document, setDocument] = useState<ParsedDocument | null>(null);
+  const [document, setDocument] = useState<DocumentState | null>(null);
   const [settings, setSettings] = useState<ReaderSettings>(() => {
-    // Load settings from localStorage if available
     const saved = localStorage.getItem('adhd-reader-settings');
     if (saved) {
       try {
@@ -25,25 +28,12 @@ function App() {
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // Save settings to localStorage
   useEffect(() => {
     localStorage.setItem('adhd-reader-settings', JSON.stringify(settings));
   }, [settings]);
 
-  // Process text into chunks when document or settings change
-  const chunks = useMemo<TextChunk[]>(() => {
-    if (!document) return [];
-    return chunkText(document.content, settings.chunkSize, settings.bionicIntensity);
-  }, [document, settings.chunkSize, settings.bionicIntensity]);
-
-  // Re-apply bionic formatting when intensity changes
-  const processedChunks = useMemo(() => {
-    if (!settings.bionicEnabled) return chunks;
-    return applyBionicToChunks(chunks, settings.bionicIntensity);
-  }, [chunks, settings.bionicEnabled, settings.bionicIntensity]);
-
   const handleFileLoaded = useCallback((title: string, content: string) => {
-    setDocument({ title, content, chunks: [] });
+    setDocument({ title, content });
   }, []);
 
   const handleNewFile = () => {
@@ -52,10 +42,10 @@ function App() {
 
   return (
     <div className="app">
-      {/* Background Game */}
-      <BackgroundGame
+      {/* Background Video */}
+      <BackgroundVideo
         opacity={settings.backgroundEnabled ? settings.backgroundOpacity : 0}
-        isPlaying={settings.backgroundEnabled && document !== null}
+        isPlaying={settings.backgroundEnabled}
       />
 
       {/* Header - only show when document is loaded */}
@@ -63,11 +53,11 @@ function App() {
         <header className="app-header">
           <button className="header-button" onClick={handleNewFile}>
             <Upload size={20} />
-            <span>New File</span>
+            <span>New</span>
           </button>
 
           <div className="header-logo">
-            <Sparkles size={24} className="logo-icon" />
+            <Sparkles size={20} className="logo-icon" />
             <span>ADHD Reader</span>
           </div>
 
@@ -76,7 +66,6 @@ function App() {
             onClick={() => setIsSettingsOpen(true)}
           >
             <Settings size={20} />
-            <span>Settings</span>
           </button>
         </header>
       )}
@@ -92,24 +81,24 @@ function App() {
               </div>
 
               <p className="welcome-subtitle">
-                Transform any document into an ADHD-friendly reading experience
+                Read documents with Subway Surfers playing in the background
               </p>
 
               <div className="features-grid">
                 <div className="feature-card">
-                  <BookOpen size={24} />
-                  <h3>Smart Chunking</h3>
-                  <p>Breaks text into digestible pieces</p>
+                  <Video size={24} />
+                  <h3>Background Video</h3>
+                  <p>Subway Surfers gameplay</p>
                 </div>
                 <div className="feature-card">
                   <Sparkles size={24} />
-                  <h3>Bionic Reading</h3>
-                  <p>Bold text guides your focus</p>
+                  <h3>Focus Mode</h3>
+                  <p>Distraction that helps focus</p>
                 </div>
                 <div className="feature-card">
                   <Settings size={24} />
                   <h3>Customizable</h3>
-                  <p>Fonts, colors, and more</p>
+                  <p>Fonts, themes, opacity</p>
                 </div>
               </div>
 
@@ -120,13 +109,13 @@ function App() {
                 onClick={() => setIsSettingsOpen(true)}
               >
                 <Settings size={16} />
-                Customize your reading experience
+                Customize settings
               </button>
             </div>
           </div>
         ) : (
           <TextReader
-            chunks={processedChunks}
+            content={document.content}
             settings={settings}
             title={document.title}
           />
